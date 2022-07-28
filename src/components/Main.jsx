@@ -6,8 +6,9 @@ import Form from "./Form.jsx";
 import api from "../api/api.js";
 import axios from "axios";
 import "./style.css";
+import { Switch } from "@mantine/core";
 
-function Main() {
+function Main({ theme, setTheme }) {
   const [tasks, setTasks] = useState([]);
   const [tasksFiltered, setTasksFiltered] = useState([]);
   const [addFormFlag, setAddFormFlag] = useState(false);
@@ -129,43 +130,60 @@ function Main() {
   return (
     <div className="flex flex-col p-2">
       {addFormFlag || addSubtask ? newTaskForm() : ""}
-      <div className="flex w-full justify-center items-center ">
-        <div className="flex justify-center">
-          <Button
-            className="bg-blue-500 mx-2"
-            onClick={() => {
-              setAddFormFlag(true);
+      <div className="flex w-full">
+        <div className="flex w-full justify-center items-center" style={{}}>
+          <div className="flex justify-center">
+            <Button
+              className="bg-blue-500 mx-2"
+              onClick={() => {
+                setAddFormFlag(true);
+              }}
+            >
+              Add task
+            </Button>
+          </div>
+          <Select
+            placeholder="Pick one"
+            defaultValue="all"
+            data={[
+              { value: "all", label: "all" },
+              { value: "completed", label: "completed" },
+              { value: "uncompleted", label: "uncompleted" },
+            ]}
+            onChange={(e) => {
+              if (e !== "all") {
+                let tmp;
+                if (e === "completed")
+                  tmp = tasks.filter((el) => el.completed == true);
+                else
+                  tmp = tasks.filter((el) => {
+                    console.log(
+                      "title: " + el.title + " ,completed: " + el.completed
+                    );
+                    return el.completed == false;
+                  });
+                setTasksFiltered(tmp);
+              } else {
+                setTasksFiltered([]);
+              }
             }}
-          >
-            Add task
-          </Button>
+          />
         </div>
-        <Select
-          placeholder="Pick one"
-          defaultValue="all"
-          data={[
-            { value: "all", label: "all" },
-            { value: "completed", label: "completed" },
-            { value: "uncompleted", label: "uncompleted" },
-          ]}
-          onChange={(e) => {
-            if (e !== "all") {
-              let tmp;
-              if (e === "completed")
-                tmp = tasks.filter((el) => el.completed == true);
-              else
-                tmp = tasks.filter((el) => {
-                  console.log(
-                    "title: " + el.title + " ,completed: " + el.completed
-                  );
-                  return el.completed == false;
-                });
-              setTasksFiltered(tmp);
-            } else {
-              setTasksFiltered([]);
-            }
-          }}
-        />
+        <div
+          className={
+            "flex items-center justify-around text-xs w-1/6" +
+            (theme === "dark" ? " text-white" : "")
+          }
+        >
+          <label>Light mode</label>
+          <Switch
+            color="gray"
+            onChange={() => {
+              theme === "dark" ? setTheme("light") : setTheme("dark");
+            }}
+          />
+          <label>Dark mode</label>
+        </div>{" "}
       </div>
 
       <TableOfUsers
@@ -176,6 +194,7 @@ function Main() {
         start={start}
         showMore={showMore}
         sortTasks={sortTasks}
+        theme={theme}
       ></TableOfUsers>
     </div>
   );

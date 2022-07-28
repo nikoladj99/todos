@@ -12,6 +12,7 @@ function TableOfUsers({
   start,
   showMore,
   setAddSubtask,
+  theme,
 }) {
   const titleRef = useRef();
   const [updateTitle, setUpdateTitle] = useState(false);
@@ -105,7 +106,10 @@ function TableOfUsers({
     if (task.subtasks) {
       return task.subtasks.map((subtask) => {
         return (
-          <tr key={subtask.title} className="text-xs">
+          <tr
+            key={subtask.title}
+            className={"text-xs" + (theme === "dark" ? " text-white" : "")}
+          >
             <td></td>
             <td></td>
             <td>{subtask.title}</td>
@@ -195,6 +199,7 @@ function TableOfUsers({
               snapshot.isDragging,
               provided.draggableProps.style
             )}
+            className={"text-xs" + (theme === "dark" ? " text-white" : "")}
           >
             <td
               style={getTdStyle(
@@ -318,6 +323,7 @@ function TableOfUsers({
             >
               <Checkbox
                 size="xl"
+                color={theme === "dark" ? "gray" : "white"}
                 defaultChecked={task.completed ? true : false}
                 onClick={() => {
                   task.completed = !task.completed;
@@ -364,7 +370,7 @@ function TableOfUsers({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Table m={10} highlightOnHover>
+      <Table m={10}>
         <thead>
           <tr>
             <th className="">Priority</th>
